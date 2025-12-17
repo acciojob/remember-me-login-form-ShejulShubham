@@ -1,59 +1,50 @@
- (function () {
-        //your JS code here. If required.
-        const usernameInput = document.getElementById("username");
-        const passwordInput = document.getElementById("password");
-        const checkbox = document.getElementById("checkbox");
-        const existingBtn = document.getElementById("existing");
-        const form = document.getElementById("login-form");
+JS:
+(function () {
+  const form = document.getElementById("login-form");
+  const usernameInput = document.getElementById("username");
+  const passwordInput = document.getElementById("password");
+  const rememberCheckbox = document.getElementById("checkbox");
+  const existingBtn = document.getElementById("existing");
 
-        function checkForExistingUser() {
-          return (
-            !!localStorage.getItem("username") && localStorage.getItem("password")
-          );
-        }
+  function credsExist() {
+    return localStorage.getItem("username") && localStorage.getItem("password");
+  }
 
-        function updateExistingUserBtn() {
-          if (checkForExistingUser()) {
-            existingBtn.disabled = false;
-          }else {
-            existingBtn.disabled = true;
-          }
-        }
+  function updateExistingVisibility() {
+    existingBtn.style.display = credsExist() ? "block" : "none";
+  }
 
-        existingBtn.addEventListener("click", () => {
+  window.addEventListener("DOMContentLoaded", () => {
+    // Ensure initial expectations: empty fields & unchecked checkbox
+    usernameInput.value = "";
+    passwordInput.value = "";
+    rememberCheckbox.checked = false;
+    updateExistingVisibility();
+  });
 
-          if (checkForExistingUser()) {
-            const username = localStorage.getItem("username");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-          alert(`Logged in as ${username}`);          }
-        });
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
 
-        window.addEventListener("DOMContentLoaded", () => {
-          usernameInput.value = "";
-          passwordInput.value = "";
-          checkbox.checked = false;
+    alert(`Logged in as ${username}`);
 
-          updateExistingUserBtn();
-        });
+    if (rememberCheckbox.checked) {
+      localStorage.setItem("username", username);
+      localStorage.setItem("password", password);
+    } else {
+      localStorage.removeItem("username");
+      localStorage.removeItem("password");
+    }
 
-        form.addEventListener("submit", handleSubmit);
+    updateExistingVisibility();
+  });
 
-        function handleSubmit(e) {
-          e.preventDefault();
-
-          const username = usernameInput.value.trim();
-          const password = passwordInput.value;
-
-          alert(`Logged in as ${username}`);
-
-          if (checkbox.checked) {
-            localStorage.setItem("username", username);
-            localStorage.setItem("password", password);
-          } else {
-            localStorage.removeItem("username");
-            localStorage.removeItem("password");
-          }
-
-          updateExistingUserBtn();
-        }
-      })();
+  existingBtn.addEventListener("click", () => {
+    const savedUsername = localStorage.getItem("username");
+    if (savedUsername) {
+      alert(`Logged in as ${savedUsername}`);
+    }
+  });
+})();
